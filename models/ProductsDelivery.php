@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'offers_delivery':
  * @property string $id
- * @property integer $offer_id
+ * @property integer $product_id
  * @property string $delivery_type
  * @property string $delivery_cost
  */
@@ -14,7 +14,7 @@ class ProductsDelivery extends SiteActiveRecord
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return OffersDelivery the static model class
+	 * @return ProductsDelivery the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -38,14 +38,21 @@ class ProductsDelivery extends SiteActiveRecord
 		// will receive user inputs.
 		return array(
 			array('product_id', 'numerical', 'integerOnly'=>true),
-			array('delivery_type', 'length', 'max'=>255),
-			array('delivery_cost', 'length', 'max'=>10),
+			array('title', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, product_id, delivery_type, delivery_cost', 'safe', 'on'=>'search'),
+			array('id, description, delivery_cost', 'safe'),
+			array('id, description, delivery_cost', 'safe', 'on'=>'search'),
 		);
 	}
 
+	public function relations()
+	{
+		return array(
+			'product'=>array(self::BELONGS_TO, 'Products', 'product_id'),
+		);
+	}
+	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -54,7 +61,8 @@ class ProductsDelivery extends SiteActiveRecord
 		return array(
 			'id' => 'ID',
 			'product_id' => 'Product',
-			'delivery_type' => 'Delivery Type',
+			'title' => 'Title',
+			'description' => 'Description',
 			'delivery_cost' => 'Delivery Cost',
 		);
 	}
@@ -72,9 +80,8 @@ class ProductsDelivery extends SiteActiveRecord
 		$criteria->order='id DESC';
 
 		$criteria->compare('id',$this->id,true);
-		$criteria->compare('offer_id',$this->offer_id);
-		$criteria->compare('delivery_type',$this->delivery_type,true);
-		$criteria->compare('delivery_cost',$this->delivery_cost,true);
+		$criteria->compare('product_id',$this->product_id);
+		$criteria->compare('title',$this->title,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -98,6 +105,14 @@ class ProductsDelivery extends SiteActiveRecord
 		}
 		else
 			return false;
+    }
+    
+    public function adminActions()
+    {
+    	$result = l('Edit',array('/productsDelivery/update', 'id'=>$this->id), array('class'=>'btn btn-mini btn-primary'));
+    	$result .= '&nbsp;&nbsp;'.l('Delete','', array('class'=>'btn btn-mini delete_dialog', 'data-url'=>url("/productsDelivery/delete",array('id'=>$this->id))));
+    	
+    	return $result;
     }
 	
 }

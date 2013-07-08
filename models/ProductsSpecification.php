@@ -96,4 +96,18 @@ class ProductsSpecification extends SiteActiveRecord
 		else
 			return false;
     }
+    
+    public function listSpecifications()
+    {
+	    $data=ProductsSpecification::model()->findAll();
+		return CHtml::listData($data,'id','title'); 
+    }
+    
+    public function adminActions()
+    {
+    	$result = l('Edit',array('/productsSpecification/update', 'id'=>$this->id), array('class'=>'btn btn-mini btn-primary'));
+    	$result .= '&nbsp;&nbsp;'.l('Delete','', array('class'=>'btn btn-mini delete_dialog', 'data-url'=>url("/productsSpecification/delete",array('id'=>$this->id))));
+    	
+    	return $result;
+    }
 }

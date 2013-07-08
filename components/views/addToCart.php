@@ -9,7 +9,7 @@
 				echo ' <span class="required">*</span>';
 			
 			//echo CHtml::textField($field);
-			echo CHtml::radioButtonList($field, $variation[0]->specification->required ? $variation[0]->id : null, OffersVariation::listData($variation));
+			echo CHtml::radioButtonList($field, $variation[0]->specification->required ? $variation[0]->id : null, ProductsVariation::listData($variation));
 		}
 	} ?>
 	

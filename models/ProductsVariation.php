@@ -39,7 +39,7 @@ class ProductsVariation extends SiteActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('product_id, specification_id, title, price_adjustion, listing_order', 'required'),
+			array('product_id, title, price_adjustion', 'required'),
 			array('product_id, specification_id, listing_order', 'numerical', 'integerOnly'=>true),
 			array('title', 'length', 'max'=>255),
 			array('price_adjustion', 'length', 'max'=>10),
@@ -57,8 +57,8 @@ class ProductsVariation extends SiteActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'offer' => array(self::BELONGS_TO, 'Offers', 'offer_id'),
-			'specification' => array(self::BELONGS_TO, 'OffersSpecification', 'specification_id'),
+			'product'=>array(self::BELONGS_TO, 'Products', 'product_id'),
+			'specification' => array(self::BELONGS_TO, 'ProductsSpecification', 'specification_id'),
 		);
 	}
 
@@ -154,5 +154,13 @@ class ProductsVariation extends SiteActiveRecord
 	public function getPriceAdjustion() {
 		return $this->price_adjustion;
 	}
+	
+	public function adminActions()
+    {
+    	$result = l('Edit',array('/productsVariation/update', 'id'=>$this->id), array('class'=>'btn btn-mini btn-primary'));
+    	$result .= '&nbsp;&nbsp;'.l('Delete','', array('class'=>'btn btn-mini delete_dialog', 'data-url'=>url("/productsVariation/delete",array('id'=>$this->id))));
+    	
+    	return $result;
+    }
 	
 }

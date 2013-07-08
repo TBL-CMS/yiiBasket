@@ -179,25 +179,6 @@ class OrdersItems extends SiteActiveRecord
 	
 	public function adminActions()
 	{
-		$currentStatus = $this->active==1?'Hide':'Show';
-		$statusButton = $this->active==1?'warning':'success';
-		
-		$result =  CHtml::ajaxLink(
-				        $currentStatus,
-				        url('/OrdersItems/toggleActive'),
-				        array(
-			                'update'=>'.btn-hide-'.$this->id,
-			                'method'=>'post',
-			                'data'=> array( 'id' => $this->id ),
-			                /*'success' => "function( data )
-			                {
-			                	alert( data );
-			                }",*/
-				        ),
-				        array(
-				        	'class'=>"btn btn-mini btn-{$statusButton} btn-hide-".$this->id,
-				        )
-					);	
 		$result .= '&nbsp;&nbsp;'.l('Edit',array('/OrdersItems/update', 'id'=>$this->id), array('class'=>'btn btn-mini btn-primary'));
     	$result .= '&nbsp;&nbsp;'.l('Delete','', array('class'=>'btn btn-mini delete_dialog', 'data-url'=>url("/OrdersItems/delete",array('id'=>$this->id))));
 
