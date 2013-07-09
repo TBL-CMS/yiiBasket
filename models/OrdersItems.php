@@ -196,6 +196,24 @@ class OrdersItems extends SiteActiveRecord
 		return $specifications;
 	}
 	
+	public function listSpecifications() {
+        if(!$specs = $this->getSpecifications())
+            return '';
+
+        $str = '(';
+        foreach($specs as $key => $specification) {
+            if($model = ProductsSpecification::model()->findByPk($key))
+                $value = @ProductsVariation::model()->findByPk($specification[0])->title;
+
+            $str .= $model->title. ': '.$value . ', ';
+        }
+
+        $str = substr($str, 0, -2);
+        $str .= ')';
+
+        return $str;
+    }
+	
 	public function getPrice() {
 		$price = $this->product->price;
 
@@ -204,7 +222,17 @@ class OrdersItems extends SiteActiveRecord
 				$price += @ProductsVariation::model()->findByPk(@$spec[0])->price_adjustion;
 			}
 		}
+
+        if($this->shipping_method) {
+            $price += $this->getShippingCost($this->shipping_method);
+        }
 		
-		return $this->amount * $price;
+		return ShopBasket::priceFormat($this->amount * $price);
 	}
+
+    public function getShippingCost($id)
+    {
+        $model=ProductsDelivery::model()->findByPk($id);
+        return $model->delivery_cost;
+    }
 }
