@@ -250,6 +250,18 @@ class Orders extends SiteActiveRecord
 		);
 	}
 	
+	public function getCurrentStatus()
+    {
+        if($this->status==self::STATUS_NEW)
+            return 'Not Paid Yet';
+        elseif($this->status==self::STATUS_IN_PROGRESS)
+            return 'In Progress';
+        elseif($this->status==self::STATUS_DONE)
+            return 'Order Paid';
+        elseif($this->status==self::STATUS_CANCELLED)
+            return 'Cancelled';
+    }
+	
 	public function getTotalPrice() {
 		$price = 0;
 		if($this->items)

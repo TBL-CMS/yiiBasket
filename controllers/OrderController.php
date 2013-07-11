@@ -185,8 +185,14 @@ class OrderController extends Controller
 			$this->redirect('/');
 		}
 
+		$model->order_id = $order->id;
+        $model->email = $order->customer->user->email;
 
-		if(isset($_POST['PayPalForm'])) {
+        if($model->validate()) {
+            echo 'Redirecting to paypal...';
+            echo $model->handlePayPal($order);
+        }
+		/*if(isset($_POST['PayPalForm'])) {
 			$model->attributes = $_POST['PayPalForm'];
 
 			if($model->validate()) {
@@ -195,7 +201,58 @@ class OrderController extends Controller
 		}
 
 		$this->render('paypal_form', array(
-					'model' => $model));
+					'model' => $model));*/
 	}
+	
+	public function actionIpn() {
+		Yii::import('application.modules.yiiBasket.components.payment.Paypalipnlistener');
+
+        $listener = new Paypalipnlistener();
+        $listener->use_sandbox = true;
+
+        ShopBasket::log('Paypal payment attempt');
+
+        try {
+            $verified = $listener->processIpn();
+        } catch (Exception $e) {
+            // fatal error trying to process IPN.
+            exit(0);
+        }
+
+        $postData='';
+        if ($verified) {
+            // IPN response was "VERIFIED"
+            $postData .= json_encode($_POST);
+
+            ShopBasket::log('Paypal payment arrived :'.$postData);
+        } else {
+            // IPN response was "INVALID"
+            ShopBasket::log('Paypal payment raised an error :'.$postData);
+        }
+
+        $resultData = json_decode($postData);
+
+        $this->updateOrder($resultData);
+
+	}
+
+    private function updateOrder($resultData)
+    {
+        if($order = Orders::model()->findByPk($resultData->custom))
+        {
+            if($order->status != Orders::STATUS_DONE) {
+                if($resultData->payment_status == 'Completed') {
+                    ShopBasket::log('Success Order: '.$order->order_code);
+                    $order->status = Orders::STATUS_DONE;
+
+                    ShopBasket::mailNotification($order);
+                } else
+                    $order->status = Orders::STATUS_CANCELLED;
+
+                if(!$order->save())
+                    ShopBasket::log('Error updating order');
+            }
+        }
+    }
 	
 }

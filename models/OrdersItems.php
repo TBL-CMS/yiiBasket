@@ -227,7 +227,7 @@ class OrdersItems extends SiteActiveRecord
             $price += $this->getShippingCost($this->shipping_method);
         }
 		
-		return ShopBasket::priceFormat($this->amount * $price);
+		return $this->amount * $price;
 	}
 
     public function getShippingCost($id)

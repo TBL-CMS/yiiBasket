@@ -72,7 +72,7 @@ class ShopBasket {
 		$email = Yii::app()->myBasket->orderNotificationFromEmail;
 		$from = Yii::app()->myBasket->shopName;
 		$reply = Yii::app()->myBasket->orderNotificationReplyEmail;
-		$subject = 'Order #{$order->id} has been made in '.$from;
+		$subject = "Order #{$order->order_Code} has been made in ".$from;
 		
 		$name='=?UTF-8?B?'.base64_encode($from).'?=';
 		$subject='=?UTF-8?B?'.base64_encode($subject).'?=';

@@ -6,7 +6,7 @@ class PayPalForm extends CModel
 {
 	public $order_id;
 	public $email;
-	public $currency;
+	public $currency='GBP';
 
 	public function attributeNames() {
 		return array(
@@ -44,16 +44,20 @@ class PayPalForm extends CModel
 
 				// Specify the url where paypal will send the user on success/failure
 				$paypal->addField('return',
-						Yii::app()->controller->createAbsoluteUrl('//shop/order/success'));
+						Yii::app()->controller->createAbsoluteUrl('/yiiBasket/order/success'));
 				$paypal->addField('cancel_return',
-						Yii::app()->controller->createAbsoluteUrl('//shop/order/failure'));
+						Yii::app()->controller->createAbsoluteUrl('/yiiBasket/order/failure'));
 				$paypal->addField('notify_url',
-						Yii::app()->controller->createAbsoluteUrl('//shop/order/ipn'));
+						Yii::app()->controller->createAbsoluteUrl('/yiiBasket/order/ipn'));
 
 				// Specify the product information
 				$paypal->addField('order_id', $order->id);
-				$paypal->addField('item_name', 'Order number '.$order->id);
+				$paypal->addField('item_name', 'Order number '.$order->order_code);
 				$paypal->addField('amount', $order->getTotalPrice());
+                $paypal->addField('custom', $order->id);
+
+                //Specify user details
+                $paypal->addField('email', $order->customer->user->email);
 
 				if(Yii::app()->myBasket->payPalTestMode)
 					$paypal->enableTestMode();
