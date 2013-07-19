@@ -2,7 +2,7 @@
 
 class BasketController extends Controller
 {
-	public $productController='offers';
+	public $productController='products';
 	
 	// Add a new product to the shopping cart
 	public function actionCreate()
@@ -11,12 +11,12 @@ class BasketController extends Controller
 	
 		if(!is_numeric($_POST['amount']) || $_POST['amount'] <= 0) {
 			ShopBasket::setFlash('Illegal amount given');
-			$this->redirect(array($this->productController.'/view', 'id' => $_POST['offer_id']));
+			$this->redirect(array($this->productController.'/view', 'id' => $_POST['product_id']));
 		}
 
 		if(isset($_POST['Variations'])) {
 			foreach($_POST['Variations'] as $key => $variation) {
-				$specification = OffersSpecification::model()->findByPk($key);
+				$specification = ProductsSpecification::model()->findByPk($key);
 				if($specification->required && $variation[0] == '') {
 					ShopBasket::setFlash('Please select a {specification}', array('{specification}' => $specification->title));
 					$this->redirect(array($this->productController.'/view', 'id' => $_POST['product_id']));
@@ -27,7 +27,7 @@ class BasketController extends Controller
 		
 		if(!isset($_POST['ShippingMethod'])) {
 			//ShopBasket::setFlash('Please select shipping method');
-			//$this->redirect(array('/'.$this->productController.'/view', 'id' => $_POST['offer_id']));
+			//$this->redirect(array('/'.$this->productController.'/view', 'id' => $_POST['product_id']));
 			if($delivery = $product->delivery) {
 				$_POST['ShippingMethod'] = $delivery[0]->id;
 			}

@@ -208,7 +208,10 @@ class OrderController extends Controller
 		Yii::import('application.modules.yiiBasket.components.payment.Paypalipnlistener');
 
         $listener = new Paypalipnlistener();
-        $listener->use_sandbox = true;
+        if(Yii::app()->myBasket->payPalTestMode)
+            $listener->use_sandbox = true;
+        else
+            $listener->use_sandbox = false;
 
         ShopBasket::log('Paypal payment attempt');
 
@@ -249,8 +252,8 @@ class OrderController extends Controller
                 } else
                     $order->status = Orders::STATUS_CANCELLED;
 
-                if(!$order->save())
-                    ShopBasket::log('Error updating order');
+                if(!$order->save(false))
+                    ShopBasket::log('Merchant email detail: ' . $mail->Send());
             }
         }
     }

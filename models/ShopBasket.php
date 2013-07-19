@@ -90,4 +90,19 @@ class ShopBasket {
 		if ($mail->Send())
 			return true;
 	}
+
+    /**
+     * Return the total amount of products in cart
+     * @return int total Amount
+     */
+    public static function getCartTotal(){
+        $totalAmount=0;
+        $cart = self::getCartContent();
+        foreach ($cart as $key => $value) {
+            if(is_numeric($value['amount']))
+            $totalAmount += $value['amount'];
+        }
+        return $totalAmount;
+    }
+
 }

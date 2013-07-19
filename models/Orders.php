@@ -54,10 +54,10 @@ class Orders extends SiteActiveRecord
 		return array(
 			array('customer_id, delivery_address_id, billing_address_id', 'required'),
 			array('customer_id, delivery_address_id, billing_address_id, ordering_done, ordering_confirmed, payment_method, deleted', 'numerical', 'integerOnly'=>true),
-			array('delivery_date, comment', 'safe'),
+			array('delivery_date, comment, order_code, status', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, customer_id, delivery_address_id, billing_address_id, delivery_date, ordering_done, ordering_confirmed, payment_method, comment, created, status, deleted', 'safe', 'on'=>'search'),
+			array('id, customer_id, delivery_address_id, billing_address_id, delivery_date, ordering_done, ordering_confirmed, payment_method, comment, created, status, deleted, order_code, status', 'safe', 'on'=>'search'),
 		);
 	}
 
